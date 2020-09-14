@@ -4,10 +4,14 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
+import "./assets/css/bootstrap.min.css";
+import "./assets/css/now-ui-kit.css";
+import "./assets/css/now-ui-kit.min.css";
+import "./assets/css/now-ui-kit.css.map";
+import "./assets/demo/demo.css";
+
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+  <App />,
   document.getElementById('root')
 );
 
