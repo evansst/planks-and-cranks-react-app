@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect} from "react";
 
 import {
   Collapse,
@@ -8,26 +8,33 @@ import {
   NavLink,
   Nav,
   Container,
-  UncontrolledTooltip,
+  UncontrolledTooltip
 } from "reactstrap";
+import { loggedIn } from "../../helpers/requestHelper";
+import LoginModal from "../Modals/LoginModal";
 
 function IndexNavbar(props) {
+  const { navbarDefault, user } = props
+
+  console.log(user)
+
+  const [navbarColor, setNavbarColor] = useState(navbarDefault)
+  const [collapseOpen, setCollapseOpen] = useState(false)
+  const [loginModalLive, setLoginModalLive] = useState(false)
+  const [logoutModalLive, setLogoutModalLive] = useState(false)
   
-  const [navbarColor, setNavbarColor] = React.useState("navbar-transparent")
-  const [collapseOpen, setCollapseOpen] = React.useState(false)
-  
-  React.useEffect(() => {
+  useEffect(() => {
     const updateNavbarColor = () => {
       if (
-        document.documentElement.scrollTop > 399 ||
-        document.body.scrollTop > 399
+        document.documentElement.scrollTop > 299 ||
+        document.body.scrollTop > 299
       ) {
         setNavbarColor("")
       } else if (
-        document.documentElement.scrollTop < 400 ||
-        document.body.scrollTop < 400
+        document.documentElement.scrollTop < 300 ||
+        document.body.scrollTop < 300
       ) {
-        setNavbarColor("navbar-transparent")
+        setNavbarColor(navbarDefault)
       }
     }
     window.addEventListener("scroll", updateNavbarColor)
@@ -37,32 +44,43 @@ function IndexNavbar(props) {
     }
   })
 
+  const toggleLoginModal = () => {
+    setLoginModalLive(!loginModalLive)
+  }
+
+  const togglNavOpen = () => {
+    document.documentElement.classList.toggle("nav-open")
+    setCollapseOpen(!collapseOpen);
+  }
+
   return (
     <>
       {collapseOpen ? (
         <div
           id="bodyClick"
-          onClick={() => {
-            document.documentElement.classList.toggle("nav-open")
-            setCollapseOpen(false);
-          }}
+          onClick={() => togglNavOpen()}
         />
       ) : null}
-      <Navbar className={"fixed-top " + navbarColor} expand="lg" color="info">
+      <Navbar className={"fixed-top " + navbarColor} expand="lg" color="primary">
         <Container>
           <div className="navbar-translate">
-            <NavbarBrand
-              href="/index"
-              id="navbar-brand"
-            >
-              Planks & Cranks
+            <NavbarBrand href="/" id="navbar-brand">
+              <img 
+                alt="..."
+                src={require("assets/logo/logo-white.png")} 
+                width="60" 
+                loading="lazy"
+              />
+
+              {!navbarColor
+                ? <p>Planks & Cranks</p>
+                : null
+              }
+               
             </NavbarBrand>
             <button
               className="navbar-toggler navbar-toggler"
-              onClick={() => {
-                document.documentElement.classList.toggle("nav-open")
-                setCollapseOpen(!collapseOpen);
-              }}
+              onClick={() => togglNavOpen()}
               aria-expanded={collapseOpen}
               type="button"
             >
@@ -87,37 +105,63 @@ function IndexNavbar(props) {
                   <p>Sell</p>
                 </NavLink>
               </NavItem>
+              { user
+                  ? (<NavItem >
+                      <NavLink href="/profile">
+                        <i className="now-ui-icons users_circle-08"></i>
+                        <p>{user.username}</p>
+                      </NavLink>
+                    </NavItem>)
+                  : null
+              }
              
               <NavItem>
                 <NavLink
-                  href=""
-                  target="_blank"
-                  id="facebook-tooltip"
+                  onClick={ (event) => {
+                    event.preventDefault();
+                    if(user) {
+                      setLogoutModalLive(true)
+                      togglNavOpen()
+                    } else {
+                      setLoginModalLive(true)
+                      togglNavOpen()
+                    }
+                  }}
+                  id="user-profile-tooltip"
                 >
-                  <i className="fab fa-facebook-square"></i>
-                  <p className="d-lg-none d-xl-none">Facebook</p>
+                  {
+                    user
+                      ? (<div>
+                          <i className="now-ui-icons sport_user-run"></i>
+                          <p className="d-lg-non d-xl-none">Log Out</p>
+                      </div>)
+                      : (<div>
+                          <i className="now-ui-icons users_circle-08"></i>
+                          <p className="d-lg-none d-xl-none">Log In</p>
+                      </div>)
+                  }
                 </NavLink>
-                <UncontrolledTooltip target="#facebook-tooltip">
-                  Like us on Facebook
+                <UncontrolledTooltip target="#user-profile-tooltip">
+         
                 </UncontrolledTooltip>
               </NavItem>
               <NavItem>
                 <NavLink
                   href=""
-                  target="_blank"
-                  id="instagram-tooltip"
+                  id="cart-tooltip"
                 >
-                  <i className="fab fa-instagram"></i>
-                  <p className="d-lg-none d-xl-none">Instagram</p>
+                  <i className="now-ui-icons shopping_cart-simple"></i>
+                  <p className="d-lg-none d-xl-none">Cart</p>
                 </NavLink>
-                <UncontrolledTooltip target="#instagram-tooltip">
-                  Follow us on Instagram
+                <UncontrolledTooltip target="#cart-tooltip">
+                  Checkout
                 </UncontrolledTooltip>
               </NavItem>
             </Nav>
           </Collapse>
         </Container>
       </Navbar>
+      <LoginModal isOpen={loginModalLive} toggleModal={toggleLoginModal}/>
     </>
   );
 }

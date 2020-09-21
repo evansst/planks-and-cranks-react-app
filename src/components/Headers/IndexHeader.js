@@ -20,10 +20,10 @@ function IndexHeader(props) {
 
   return (
     <>
-      <div className="page-header clear-filter" filter-color="blue">
+      <div className="page-header" filter-color="primary">
         <div
           className="page-header-image"
-          style={{ backgroundImage: "url(" + require("../../assets/img/header.jpg") + ")" }}
+          style={{ backgroundImage: "url(" + require("assets/img/IMG_2997.jpeg") + ")" }}
           ref={pageHeader}
         ></div>
         <Container>
@@ -33,7 +33,6 @@ function IndexHeader(props) {
               className="logo"
               src={require("../../assets/logo/Planks & Cranks-logo-white.png")}
             ></img>
-            {/* <h1 className="h1">Planks & Cranks</h1> */}
             <h3>A better way to buy and sell quality outdoor gear.</h3>
           </div>
         </Container>
